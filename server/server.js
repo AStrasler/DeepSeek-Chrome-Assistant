@@ -60,12 +60,22 @@ app.post("/chat", async (req, res) => {
 
         const data = await response.json();
 
-        console.log("DeepSeek response:", data);
+        console.log("DeepSeek response:");
+        console.log(JSON.stringify(data, null, 2));
 
 
         if (!response.ok) {
             return res.status(response.status).json({
-                error: data
+                error: "DeepSeek API error",
+                details: data
+            });
+        }
+
+
+        if (!data.choices || data.choices.length === 0) {
+            return res.status(500).json({
+                error: "Unexpected DeepSeek response",
+                details: data
             });
         }
 
@@ -88,7 +98,6 @@ app.post("/chat", async (req, res) => {
 });
 
 
-// Start server
 app.listen(3000, () => {
     console.log("🚀 Server running at http://localhost:3000");
 });

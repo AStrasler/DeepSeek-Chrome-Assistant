@@ -2,11 +2,15 @@ const sendButton = document.getElementById("send");
 
 sendButton.addEventListener("click", async () => {
 
-    const prompt = document.getElementById("prompt").value;
+    const prompt =
+    document.getElementById("prompt").value;
 
-    const responseBox = document.getElementById("response");
+    const responseBox =
+    document.getElementById("response");
+
 
     responseBox.innerText = "Thinking...";
+
 
     try {
 
@@ -14,9 +18,11 @@ sendButton.addEventListener("click", async () => {
             "http://localhost:3000/chat",
             {
                 method: "POST",
+
                 headers: {
                     "Content-Type": "application/json"
                 },
+
                 body: JSON.stringify({
                     message: prompt
                 })
@@ -27,12 +33,21 @@ sendButton.addEventListener("click", async () => {
         const data = await response.json();
 
 
-        if (data.error) {
-            throw new Error(data.error);
+        console.log("Server response:", data);
+
+
+        if (!response.ok) {
+
+            responseBox.innerText =
+            "ERROR:\n" +
+            JSON.stringify(data, null, 2);
+
+            return;
         }
 
 
-        responseBox.innerText = data.reply;
+        responseBox.innerText =
+        data.reply;
 
 
     } catch (error) {
@@ -40,7 +55,8 @@ sendButton.addEventListener("click", async () => {
         console.error(error);
 
         responseBox.innerText =
-        "ERROR: " + error.message;
+        "CONNECTION ERROR:\n" +
+        error.message;
 
     }
 
