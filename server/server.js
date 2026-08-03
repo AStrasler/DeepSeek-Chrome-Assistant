@@ -9,9 +9,14 @@ app.use(cors());
 app.use(express.json());
 
 
+app.get("/", (req, res) => {
+    res.send("DeepSeek server is running!");
+});
+
+
 app.post("/chat", async (req, res) => {
 
-    const userMessage = req.body.message;
+    const message = req.body.message;
 
     try {
 
@@ -33,7 +38,7 @@ app.post("/chat", async (req, res) => {
                     messages: [
                         {
                             role: "user",
-                            content: userMessage
+                            content: message
                         }
                     ]
 
@@ -46,12 +51,13 @@ app.post("/chat", async (req, res) => {
 
 
         res.json({
-            reply:
-            data.choices[0].message.content
+            reply: data.choices[0].message.content
         });
 
 
-    } catch(error){
+    } catch(error) {
+
+        console.error(error);
 
         res.status(500).json({
             error: error.message
@@ -63,9 +69,5 @@ app.post("/chat", async (req, res) => {
 
 
 app.listen(3000, () => {
-
-    console.log(
-    "DeepSeek server running on port 3000"
-    );
-
+    console.log("🚀 Server running at http://localhost:3000");
 });
