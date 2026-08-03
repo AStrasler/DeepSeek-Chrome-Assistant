@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "DeepSeek Personal Assistant",
+  "version": "1.0",
+  "description": "My personal DeepSeek AI Chrome extension",
+
+  "action": {
+    "default_popup": "popup.html"
+  },
+
+  "permissions": [
+    "storage",
+    "activeTab"
+  ]
+}
