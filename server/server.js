@@ -9,14 +9,25 @@ app.use(cors());
 app.use(express.json());
 
 
+// Test route
 app.get("/", (req, res) => {
     res.send("DeepSeek server is running!");
 });
 
 
+// DeepSeek chat route
 app.post("/chat", async (req, res) => {
 
+    console.log("Chat request received:", req.body);
+
     const message = req.body.message;
+
+    if (!message) {
+        return res.status(400).json({
+            error: "No message provided"
+        });
+    }
+
 
     try {
 
@@ -49,15 +60,24 @@ app.post("/chat", async (req, res) => {
 
         const data = await response.json();
 
+        console.log("DeepSeek response:", data);
+
+
+        if (!response.ok) {
+            return res.status(response.status).json({
+                error: data
+            });
+        }
+
 
         res.json({
             reply: data.choices[0].message.content
         });
 
 
-    } catch(error) {
+    } catch (error) {
 
-        console.error(error);
+        console.error("Server error:", error);
 
         res.status(500).json({
             error: error.message
@@ -68,6 +88,7 @@ app.post("/chat", async (req, res) => {
 });
 
 
+// Start server
 app.listen(3000, () => {
     console.log("🚀 Server running at http://localhost:3000");
 });
