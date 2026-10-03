@@ -1,11 +1,9 @@
 require("dotenv").config();
 
 const express = require("express");
-const cors = require("cors");
 
 const app = express();
 
-app.use(cors());
 app.use(express.json());
 
 
@@ -98,6 +96,6 @@ app.post("/chat", async (req, res) => {
 });
 
 
-app.listen(3000, () => {
-    console.log("🚀 Server running at http://localhost:3000");
+app.listen(3000, "127.0.0.1", () => {
+    console.log("🚀 Server running at http://127.0.0.1:3000");
 });
