@@ -4,6 +4,20 @@ const express = require("express");
 
 const app = express();
 
+// This loopback API returns JSON and plain text only. Set browser security
+// headers without adding a dependency or enabling HTTPS assumptions on localhost.
+app.disable("x-powered-by");
+app.use((req, res, next) => {
+    res.set({
+        "Content-Security-Policy": "default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "Referrer-Policy": "no-referrer",
+        "Cache-Control": "no-store"
+    });
+    next();
+});
+
 app.use(express.json());
 
 
