@@ -4,6 +4,7 @@
   "description": "Local DeepSeek API gateway",
   "main": "server.js",
   "scripts": {
+    "test": "node --test",
     "start": "node server.js"
   },
   "dependencies": {

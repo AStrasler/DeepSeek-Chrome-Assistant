@@ -4,6 +4,20 @@ const express = require("express");
 
 const app = express();
 
+// This loopback API returns JSON and plain text only. Set browser security
+// headers without adding a dependency or enabling HTTPS assumptions on localhost.
+app.disable("x-powered-by");
+app.use((req, res, next) => {
+    res.set({
+        "Content-Security-Policy": "default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "Referrer-Policy": "no-referrer",
+        "Cache-Control": "no-store"
+    });
+    next();
+});
+
 app.use(express.json());
 
 
@@ -96,6 +110,27 @@ app.post("/chat", async (req, res) => {
 });
 
 
-app.listen(3000, "127.0.0.1", () => {
-    console.log("🚀 Server running at http://127.0.0.1:3000");
+// Preserve the middleware's security headers on unmatched routes and parser errors.
+app.use((req, res) => {
+    res.status(404).type("text/plain").send(`Cannot ${req.method} ${req.path}`);
 });
+
+app.use((error, req, res, next) => {
+    if (res.headersSent) {
+        return next(error);
+    }
+
+    const status = error.status || error.statusCode || 500;
+    res.status(status).json({
+        error: status === 400 ? "Invalid JSON request" : "Request failed"
+    });
+});
+
+
+if (require.main === module) {
+    app.listen(3000, "127.0.0.1", () => {
+        console.log("🚀 Server running at http://127.0.0.1:3000");
+    });
+}
+
+module.exports = app;
