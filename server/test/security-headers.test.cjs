@@ -46,10 +46,17 @@ test("security headers are present on API and routing errors", async () => {
             headers: { "content-type": "application/json" },
             body: "{}"
         });
+        const malformedJson = await fetch(`${url}/chat`, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: "{"
+        });
         const notFound = await fetch(`${url}/missing`);
         assert.equal(badRequest.status, 400);
+        assert.equal(malformedJson.status, 400);
         assert.equal(notFound.status, 404);
         assertSecurityHeaders(badRequest);
+        assertSecurityHeaders(malformedJson);
         assertSecurityHeaders(notFound);
     });
 });
