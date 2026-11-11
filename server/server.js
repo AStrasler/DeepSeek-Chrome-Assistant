@@ -110,6 +110,23 @@ app.post("/chat", async (req, res) => {
 });
 
 
+// Preserve the middleware's security headers on unmatched routes and parser errors.
+app.use((req, res) => {
+    res.status(404).type("text/plain").send(`Cannot ${req.method} ${req.path}`);
+});
+
+app.use((error, req, res, next) => {
+    if (res.headersSent) {
+        return next(error);
+    }
+
+    const status = error.status || error.statusCode || 500;
+    res.status(status).json({
+        error: status === 400 ? "Invalid JSON request" : "Request failed"
+    });
+});
+
+
 if (require.main === module) {
     app.listen(3000, "127.0.0.1", () => {
         console.log("🚀 Server running at http://127.0.0.1:3000");
